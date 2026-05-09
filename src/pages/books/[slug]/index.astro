@@ -1,0 +1,152 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import BookCover from "../../../components/BookCover.astro";
+import { getAllBooks, type Book } from "../../../lib/books";
+
+export async function getStaticPaths() {
+  const books = await getAllBooks();
+  return books.map((book) => ({
+    params: { slug: book.slug },
+    props: { book },
+  }));
+}
+
+interface Props {
+  book: Book;
+}
+
+const { book } = Astro.props;
+const firstChapter = book.chapters[0];
+const canonical = new URL(`/books/${book.slug}/`, Astro.site).toString();
+const title = `${book.title} - читать онлайн бесплатно`;
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Book",
+  name: book.title,
+  headline: title,
+  description: book.description,
+  author: {
+    "@type": "Organization",
+    name: book.author,
+  },
+  inLanguage: book.language,
+  isAccessibleForFree: true,
+  datePublished: String(book.publishedYear),
+  url: canonical,
+  image: new URL(book.coverImage, Astro.site).toString(),
+  ...(book.litresUrl ? { sameAs: book.litresUrl } : {}),
+  hasPart: book.chapters.map((chapter) => ({
+    "@type": "Chapter",
+    name: chapter.title,
+    url: new URL(`/books/${book.slug}/${chapter.slug}/`, Astro.site).toString(),
+  })),
+};
+---
+
+<BaseLayout
+  title={title}
+  description={book.description}
+  canonical={canonical}
+  image={book.coverImage}
+  ogType="book"
+  jsonLd={jsonLd}
+  readHref={`/books/${book.slug}/${firstChapter.slug}/`}
+>
+  <main>
+    <section class="book-hero">
+      <BookCover
+        title={book.title}
+        subtitle={book.subtitle}
+        image={book.coverImage}
+        width={book.coverWidth}
+        height={book.coverHeight}
+      />
+      <div>
+        <p class="eyebrow">Бесплатная книга</p>
+        <h1>{book.title}</h1>
+        <p class="book-subtitle">{book.subtitle}</p>
+        <p class="hero__lead">{book.description}</p>
+        <div class="actions">
+          <a class="button button--primary" href={`/books/${book.slug}/${firstChapter.slug}/`}>Читать онлайн</a>
+          <a class="button button--secondary" href={book.downloadPath}>Скачать Markdown</a>
+          {
+            book.litresUrl && (
+              <a class="button button--secondary external-link" href={book.litresUrl} target="_blank" rel="noopener noreferrer">
+                Литрес
+              </a>
+            )
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="content-band">
+      <dl class="meta-grid meta-grid--wide">
+        <div>
+          <dt>Автор</dt>
+          <dd>{book.author}</dd>
+        </div>
+        <div>
+          <dt>Язык</dt>
+          <dd>Русский</dd>
+        </div>
+        <div>
+          <dt>Разделов</dt>
+          <dd>{book.chapters.length}</dd>
+        </div>
+        <div>
+          <dt>Объем</dt>
+          <dd>{book.wordCount.toLocaleString("ru-RU")} слов</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="text-section">
+      <div class="section-heading">
+        <p class="eyebrow">Аннотация</p>
+        <h2>О книге</h2>
+        <p>{book.description}</p>
+      </div>
+      <div class="book-annotation">
+        {book.litresAnnotation.map((paragraph) => <p>{paragraph}</p>)}
+      </div>
+    </section>
+
+    <section class="toc-section">
+      <div class="section-heading">
+        <p class="eyebrow">Содержание</p>
+        <h2>Читать по главам</h2>
+      </div>
+      <ol class="chapter-list">
+        {
+          book.chapters.map((chapter) => (
+            <li>
+              <a href={`/books/${book.slug}/${chapter.slug}/`}>
+                <span>{chapter.title}</span>
+                <small>{chapter.readingMinutes} мин</small>
+              </a>
+              {chapter.excerpt && <p>{chapter.excerpt}</p>}
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="text-section">
+      <div class="section-heading">
+        <p class="eyebrow">О формате</p>
+        <h2>HTML-читалка для индексации и нормального чтения</h2>
+      </div>
+      <div class="prose-columns">
+        <p>
+          Каждая глава опубликована отдельной статической страницей. Текст доступен сразу в HTML,
+          поэтому его можно читать без приложения, сохранять в закладки и находить через поиск.
+        </p>
+        <p>
+          Скачать исходный Markdown можно одной кнопкой. Формат удобен для личного архива,
+          заметок и чтения вне сайта.
+        </p>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

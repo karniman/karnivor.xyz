@@ -1,0 +1,310 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import BookCover from "../components/BookCover.astro";
+import { getAllPosts } from "../lib/blog";
+import { getAllBooks } from "../lib/books";
+
+const books = await getAllBooks();
+const posts = await getAllPosts();
+const highlightedBooks = books.slice(0, 3);
+const pluralRu = (count: number, forms: [string, string, string]) => {
+  const mod10 = count % 10;
+  const mod100 = count % 100;
+
+  if (mod10 === 1 && mod100 !== 11) return forms[0];
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return forms[1];
+  return forms[2];
+};
+const topics = [
+  {
+    title: "Карнивор диета",
+    description: "Общее введение в питание животными продуктами.",
+    href: "/books/karnivor-dieta/glava-1-chto-takoe-karnivor-dieta/",
+  },
+  {
+    title: "Переход на карнивор",
+    description: "Первые недели, продукты, жир, соль и типичные ошибки.",
+    href: "/books/karnivor-dieta/glava-5-perehod-na-karnivor-dietu/",
+  },
+  {
+    title: "Мифы о мясе",
+    description: "Холестерин, жиры, почки, рак и другие частые страхи.",
+    href: "/books/karnivor-dieta/glava-4-mify-i-zabluzhdeniya-o-myase/",
+  },
+  {
+    title: "Семь правил карнивора",
+    description: "Жесткая практическая глава из книги об Оусли Стэнли.",
+    href: "/books/owsley-stanley/glava-11-sem-pravil-dlya-karnivora-bez-syusyukanya/",
+  },
+  {
+    title: "Мясная мудрость",
+    description: "Свод правил и наблюдений о мясо-жировом питании.",
+    href: "/books/owsley-stanley/prilozhenie-2-svod-myasnoy-mudrosti-medvedya/",
+  },
+  {
+    title: "Год без растений",
+    description: "Исторический пример питания только животной пищей.",
+    href: "/books/vilhjalmur-stefansson/prolog-god-bez-rasteniy/",
+  },
+  {
+    title: "Сахар и зависимость",
+    description: "Почему сладкое работает как удобная кнопка награды.",
+    href: "/books/common-drugs/sahar-belaya-smert-i-sladkaya-lozh/",
+  },
+  {
+    title: "Кофеин",
+    description: "Легальный стимулятор, бодрость, тревожность и привычка.",
+    href: "/books/common-drugs/kofein-legalnyy-psihotrop/",
+  },
+  {
+    title: "Алкоголь",
+    description: "Культурно защищенный яд и его место в бытовых ритуалах.",
+    href: "/books/common-drugs/alkogol-uzakonennyy-yad/",
+  },
+];
+const canonical = new URL("/", Astro.site).toString();
+const title = "karnivor.xyz";
+const description =
+  "Бесплатная русскоязычная библиотека о карнивор диете: книги, онлайн-чтение, практические главы и материалы о питании на основе животной пищи.";
+const heroImage = "/images/karnivor-food.png";
+const runnerImage = "/images/karnivor-runner.png";
+const aboutImage = "/images/karnivor-table.png";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "karnivor.xyz",
+  url: canonical,
+  inLanguage: "ru",
+  description,
+  publisher: {
+    "@type": "Organization",
+    name: "karnivor.xyz",
+  },
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} image={heroImage} jsonLd={jsonLd}>
+  <main>
+    <section class="hero">
+      <div class="hero__visual photo-card photo-card--home" aria-hidden="true">
+        <img
+          class="hero-illustration"
+          src={heroImage}
+          alt=""
+          width="1448"
+          height="1086"
+          loading="eager"
+          decoding="async"
+        />
+      </div>
+      <div class="hero__content">
+        <p class="eyebrow">Бесплатная онлайн-библиотека</p>
+        <p class="hero__facts">
+          {books.length} {pluralRu(books.length, ["книга", "книги", "книг"])} · {posts.length}{" "}
+          {pluralRu(posts.length, ["статья", "статьи", "статей"])}
+        </p>
+        <h1>Книги о карнивор диете на русском языке</h1>
+        <p class="hero__lead">
+          karnivor.xyz собирает длинные, удобные для чтения материалы о питании животными продуктами:
+          без ленты постов, без лишнего шума, с книгами, статьями и тематическими разделами для поиска и чтения.
+        </p>
+        <div class="actions">
+          <a class="button button--primary" href="/books/">Все книги</a>
+          <a class="button button--secondary" href="/blog/">Все статьи</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-band">
+      <div class="section-heading">
+        <p class="eyebrow">Библиотека</p>
+        <h2>Главные книги</h2>
+        <p>
+          Несколько книг для начала: о карнивор диете, историческом опыте мясо-жирового
+          питания и практических правилах долгого пути.
+        </p>
+      </div>
+      <div class="book-grid">
+        {
+          highlightedBooks.map((book) => (
+            <article class="book-card">
+              <a class="book-card__cover" href={`/books/${book.slug}/`}>
+                <BookCover
+                  title={book.title}
+                  subtitle={`${book.chapters.length} разделов`}
+                  image={book.coverImage}
+                  width={book.coverWidth}
+                  height={book.coverHeight}
+                />
+              </a>
+              <div class="book-card__body">
+                <h3>{book.title}</h3>
+                <p>{book.description}</p>
+                <dl class="compact-meta">
+                  <div>
+                    <dt>Разделов</dt>
+                    <dd>{book.chapters.length}</dd>
+                  </div>
+                  <div>
+                    <dt>Объем</dt>
+                    <dd>{book.wordCount.toLocaleString("ru-RU")} слов</dd>
+                  </div>
+                </dl>
+                <div class="actions">
+                  <a class="button button--primary" href={`/books/${book.slug}/`}>Открыть</a>
+                  <a class="button button--secondary" href={book.downloadPath}>Скачать</a>
+                </div>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+      <div class="section-actions">
+        <a class="button button--secondary" href="/books/">Все книги</a>
+      </div>
+    </section>
+
+    <section class="content-band content-band--topics">
+      <div class="section-heading">
+        <p class="eyebrow">Темы</p>
+        <h2>Ключевые темы</h2>
+        <p>
+          Ссылки ведут сразу к полезным материалам: главам, статьям и тематическим страницам.
+        </p>
+      </div>
+      <ul class="topic-list">
+        {
+          topics.map((topic) => (
+            <li>
+              <a href={topic.href}>
+                <span>{topic.title}</span>
+                <small>{topic.description}</small>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="content-band content-band--practice">
+      <div class="practice-layout">
+        <div class="practice-layout__copy">
+          <div class="section-heading">
+            <p class="eyebrow">Рассылка</p>
+            <h2>Новые материалы о карнивор питании</h2>
+            <p>
+              Получайте новые книги, главы и практические материалы на русском языке прямо на почту.
+            </p>
+          </div>
+          <form
+            action="https://app.kit.com/forms/9424219/subscriptions"
+            class="subscribe-form"
+            method="post"
+            data-kit-subscribe
+            data-api-endpoint="https://api.convertkit.com/v3/forms/9424219/subscribe"
+            data-api-key="120sF2Tpn2otgNVuECziRQ"
+          >
+            <p class="subscribe-form__message" data-subscribe-message aria-live="polite"></p>
+            <div class="subscribe-form__fields">
+              <div class="subscribe-form__field">
+                <input
+                  class="subscribe-form__input"
+                  name="email_address"
+                  aria-label="Ваш email"
+                  placeholder="Ваш email"
+                  required
+                  type="email"
+                />
+              </div>
+              <button class="subscribe-form__submit" type="submit">
+                <span data-submit-label>Подписаться</span>
+              </button>
+            </div>
+          </form>
+          <script src="/scripts/subscribe-form.js" defer></script>
+        </div>
+        <div class="practice-layout__visual photo-card photo-card--runner">
+          <img
+            class="practice-illustration"
+            src={runnerImage}
+            alt="Бегущая женщина"
+            width="1448"
+            height="1086"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </div>
+    </section>
+
+    <section class="content-band content-band--alt">
+      <div class="section-heading">
+        <p class="eyebrow">Блог</p>
+        <h2>Новые статьи</h2>
+        <p>
+          Короткие заметки о питании, привычках и практических вопросах, которые удобно читать
+          отдельно от больших книг.
+        </p>
+      </div>
+      <div class="blog-list blog-list--compact">
+        {
+          posts.slice(0, 3).map((post) => (
+            <article class="blog-card">
+              <a class="blog-card__link" href={`/blog/${post.slug}/`}>
+                <div class="blog-card__meta">
+                  <time datetime={post.publishedAt}>
+                    {new Intl.DateTimeFormat("ru-RU", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    }).format(new Date(`${post.publishedAt}T00:00:00`))}
+                  </time>
+                  <span>{post.readingMinutes} мин чтения</span>
+                </div>
+                <h3>{post.title}</h3>
+                <p>{post.description}</p>
+              </a>
+            </article>
+          ))
+        }
+      </div>
+      <div class="section-actions">
+        <a class="button button--secondary" href="/blog/">Все статьи</a>
+      </div>
+    </section>
+
+    <section class="text-section text-section--about">
+      <div class="about-layout">
+        <div class="about-layout__copy">
+          <div class="section-heading">
+            <p class="eyebrow">О сайте</p>
+            <h2>Библиотека и блог о карниворе на русском языке</h2>
+          </div>
+          <div class="prose-columns">
+            <p>
+              karnivor.xyz собирает русскоязычные книги, главы и заметки о карнивор диете,
+              мясном питании, отказе от сахара, растительных антинутриентах, насыщении,
+              адаптации и долгосрочном питании без сложных схем.
+            </p>
+            <p>
+              Здесь можно читать большие тексты по главам, переходить к отдельным темам,
+              сохранять материалы в закладки и скачивать книги для личного архива.
+            </p>
+          </div>
+        </div>
+        <div class="about-layout__visual photo-card photo-card--about">
+          <img
+            class="about-illustration"
+            src={aboutImage}
+            alt="Мясные продукты на столе"
+            width="1448"
+            height="1086"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

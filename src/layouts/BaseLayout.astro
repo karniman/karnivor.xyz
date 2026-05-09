@@ -1,0 +1,91 @@
+---
+import "../styles/global.css";
+
+type JsonLd = Record<string, unknown> | Array<Record<string, unknown>>;
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  image?: string;
+  ogType?: string;
+  jsonLd?: JsonLd;
+  bodyClass?: string;
+  readHref?: string;
+  readLabel?: string;
+}
+
+const {
+  title,
+  description,
+  canonical = new URL(Astro.url.pathname, Astro.site).toString(),
+  image,
+  ogType = "website",
+  jsonLd,
+  bodyClass = "",
+  readHref,
+  readLabel = "Читать",
+} = Astro.props;
+
+const siteName = "karnivor.xyz";
+const googleAnalyticsId = "G-C55TYB0SRL";
+const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
+const structuredData = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
+const currentPath = Astro.url.pathname;
+const isHomeActive = currentPath === "/";
+const isBooksActive = currentPath === "/books/" || currentPath.startsWith("/books/");
+const isBlogActive = currentPath === "/blog/" || currentPath.startsWith("/blog/");
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonical} />
+    {image && <meta property="og:image" content={new URL(image, Astro.site).toString()} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#231814" />
+    <link rel="alternate" hreflang="ru" href={canonical} />
+    <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}></script>
+    <script is:inline define:vars={{ googleAnalyticsId }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", googleAnalyticsId);
+    </script>
+    {structuredData.map((item) => <script is:inline type="application/ld+json" set:html={JSON.stringify(item)} />)}
+  </head>
+  <body class={bodyClass}>
+    <header class="site-header" data-pagefind-ignore>
+      <a class="brand" href="/" aria-label="karnivor.xyz">
+        <span class="brand-mark" aria-hidden="true">K</span>
+        <span>karnivor.xyz</span>
+      </a>
+      <nav class="site-nav" aria-label="Основная навигация">
+        <a class:list={{ "is-active": isHomeActive }} href="/" aria-current={isHomeActive ? "page" : undefined}>Главная</a>
+        <a class:list={{ "is-active": isBooksActive }} href="/books/" aria-current={isBooksActive ? "page" : undefined}>Книги</a>
+        {readHref && <a href={readHref}>{readLabel}</a>}
+        <a class:list={{ "is-active": isBlogActive }} href="/blog/" aria-current={isBlogActive ? "page" : undefined}>Блог</a>
+      </nav>
+    </header>
+    <slot />
+    <footer class="site-footer" data-pagefind-ignore>
+      <p>karnivor.xyz - бесплатная библиотека о карнивор питании.</p>
+      <nav aria-label="Навигация в подвале">
+        <a class:list={{ "is-active": isHomeActive }} href="/" aria-current={isHomeActive ? "page" : undefined}>Главная</a>
+        <a class:list={{ "is-active": isBooksActive }} href="/books/" aria-current={isBooksActive ? "page" : undefined}>Книги</a>
+        <a class:list={{ "is-active": isBlogActive }} href="/blog/" aria-current={isBlogActive ? "page" : undefined}>Блог</a>
+      </nav>
+    </footer>
+  </body>
+</html>

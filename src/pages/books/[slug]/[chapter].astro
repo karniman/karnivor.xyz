@@ -1,0 +1,116 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ReaderControls from "../../../components/ReaderControls.astro";
+import { getAllBooks, renderChapterMarkdown, type Book, type BookChapter } from "../../../lib/books";
+
+export async function getStaticPaths() {
+  const books = await getAllBooks();
+  return books.flatMap((book) =>
+    book.chapters.map((chapter) => ({
+      params: { slug: book.slug, chapter: chapter.slug },
+      props: { book, chapter },
+    })),
+  );
+}
+
+interface Props {
+  book: Book;
+  chapter: BookChapter;
+}
+
+const { book, chapter } = Astro.props;
+const html = await renderChapterMarkdown(book, chapter);
+const previous = book.chapters[chapter.index - 1];
+const next = book.chapters[chapter.index + 1];
+const canonical = new URL(`/books/${book.slug}/${chapter.slug}/`, Astro.site).toString();
+const title = `${chapter.title} - ${book.title}`;
+const description = chapter.excerpt || book.description;
+const progressLabel = `${chapter.index + 1} / ${book.chapters.length}`;
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Chapter",
+  name: chapter.title,
+  isPartOf: {
+    "@type": "Book",
+    name: book.title,
+    url: new URL(`/books/${book.slug}/`, Astro.site).toString(),
+  },
+  inLanguage: book.language,
+  isAccessibleForFree: true,
+  position: chapter.index + 1,
+  url: canonical,
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogType="article"
+  jsonLd={jsonLd}
+  bodyClass="reader-page"
+  readHref={`/books/${book.slug}/${chapter.slug}/`}
+>
+  <main class="reader-shell">
+    <aside class="reader-sidebar" data-pagefind-ignore>
+      <a class="reader-back" href={`/books/${book.slug}/`}>← К книге</a>
+      <p class="reader-book-title">{book.title}</p>
+      <p class="reader-sidebar-label">Содержание</p>
+      <ol>
+        {
+          book.chapters.map((item) => (
+            <li>
+              <a class:list={{ active: item.slug === chapter.slug }} href={`/books/${book.slug}/${item.slug}/`}>
+                {item.title}
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </aside>
+
+    <section class="reader-main">
+      <nav class="reader-topbar" data-pagefind-ignore aria-label="Навигация по книге">
+        <ol class="reader-breadcrumbs" aria-label="Хлебные крошки">
+          <li><a href="/">Главная</a></li>
+          <li><a href="/books/">Книги</a></li>
+          <li><a href={`/books/${book.slug}/`}>{book.title}</a></li>
+          <li aria-current="page">{progressLabel}</li>
+        </ol>
+        <ReaderControls />
+      </nav>
+
+      <article class="reader-article">
+        <p class="eyebrow">Раздел {chapter.index + 1}</p>
+        <h1>{chapter.title}</h1>
+        <div class="reader-content" set:html={html} />
+      </article>
+
+      <nav class="reader-pagination" data-pagefind-ignore aria-label="Предыдущая и следующая главы">
+        {
+          previous ? (
+            <a href={`/books/${book.slug}/${previous.slug}/`}>
+              <span>Назад</span>
+              <strong>{previous.title}</strong>
+            </a>
+          ) : (
+            <span></span>
+          )
+        }
+        {
+          next ? (
+            <a href={`/books/${book.slug}/${next.slug}/`}>
+              <span>Дальше</span>
+              <strong>{next.title}</strong>
+            </a>
+          ) : (
+            <a href={`/books/${book.slug}/`}>
+              <span>Готово</span>
+              <strong>Вернуться к книге</strong>
+            </a>
+          )
+        }
+      </nav>
+    </section>
+  </main>
+</BaseLayout>

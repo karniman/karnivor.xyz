@@ -1,0 +1,29 @@
+---
+interface Props {
+  title: string;
+  subtitle?: string;
+  label?: string;
+  image?: string;
+  width?: number;
+  height?: number;
+}
+
+const { title, subtitle = "Бесплатная книга", label = "karnivor.xyz", image, width = 1024, height = 1536 } = Astro.props;
+---
+
+<figure class="book-cover" aria-label={title}>
+  {
+    image ? (
+      <img src={image} alt={`Обложка книги «${title}»`} width={width} height={height} loading="eager" decoding="async" />
+    ) : (
+      <>
+        <div class="book-cover__grain" aria-hidden="true" />
+        <figcaption>
+          <span>{label}</span>
+          <strong>{title}</strong>
+          <small>{subtitle}</small>
+        </figcaption>
+      </>
+    )
+  }
+</figure>

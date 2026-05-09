@@ -1,0 +1,96 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BookCover from "../../components/BookCover.astro";
+import { getAllBooks } from "../../lib/books";
+
+const books = await getAllBooks();
+const canonical = new URL("/books/", Astro.site).toString();
+const title = "Карнивор книги";
+const description =
+  "Бесплатные русскоязычные книги karnivor.xyz о карнивор диете, мясо-жировом питании, Стефанссоне, Оусли Стэнли и практическом отказе от промышленной еды.";
+const heroImage = "/images/karnivor-books.png";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "Карнивор книги",
+  url: canonical,
+  inLanguage: "ru",
+  description,
+  hasPart: books.map((book) => ({
+    "@type": "Book",
+    name: book.title,
+    url: new URL(`/books/${book.slug}/`, Astro.site).toString(),
+    isAccessibleForFree: true,
+    inLanguage: book.language,
+  })),
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} image={heroImage} jsonLd={jsonLd}>
+  <main>
+    <section class="page-hero page-hero--with-illustration">
+      <div class="page-hero__content">
+        <p class="eyebrow">Библиотека</p>
+        <h1>Карнивор книги</h1>
+        <p class="hero__lead">
+          Бесплатные книги с отдельными главами: удобно читать, искать и возвращаться
+          к нужным темам без ленты и лишнего шума.
+        </p>
+      </div>
+      <div class="page-hero__visual photo-card photo-card--books">
+        <img
+          class="page-hero__illustration"
+          src={heroImage}
+          alt="Книги о питании животными продуктами"
+          width="1448"
+          height="1086"
+          loading="eager"
+          decoding="async"
+        />
+      </div>
+    </section>
+
+    <section class="content-band">
+      <div class="book-grid">
+        {
+          books.map((book) => (
+            <article class="book-card">
+              <a class="book-card__cover" href={`/books/${book.slug}/`}>
+                <BookCover
+                  title={book.title}
+                  subtitle={book.subtitle}
+                  image={book.coverImage}
+                  width={book.coverWidth}
+                  height={book.coverHeight}
+                />
+              </a>
+              <div class="book-card__body">
+                <h2>{book.title}</h2>
+                <p>{book.description}</p>
+                <dl class="compact-meta">
+                  <div>
+                    <dt>Разделов</dt>
+                    <dd>{book.chapters.length}</dd>
+                  </div>
+                  <div>
+                    <dt>Чтение</dt>
+                    <dd>{book.readingMinutes} мин</dd>
+                  </div>
+                  <div>
+                    <dt>Объем</dt>
+                    <dd>{book.wordCount.toLocaleString("ru-RU")} слов</dd>
+                  </div>
+                </dl>
+                <div class="actions">
+                  <a class="button button--primary" href={`/books/${book.slug}/`}>Открыть книгу</a>
+                  <a class="button button--secondary" href={book.downloadPath}>Скачать Markdown</a>
+                </div>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+  </main>
+</BaseLayout>

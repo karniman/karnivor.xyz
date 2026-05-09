@@ -1,0 +1,42 @@
+<div class="reader-tools" data-pagefind-ignore aria-label="Настройки чтения">
+  <button type="button" data-reader-size="-1" aria-label="Уменьшить шрифт">A-</button>
+  <button type="button" data-reader-size="1" aria-label="Увеличить шрифт">A+</button>
+  <button type="button" data-reader-theme="light">Светлая</button>
+  <button type="button" data-reader-theme="sepia">Сепия</button>
+  <button type="button" data-reader-theme="dark">Темная</button>
+</div>
+
+<script>
+  const storageKey = "karnivor.reader";
+  const root = document.documentElement;
+  const tools = document.querySelector(".reader-tools");
+  const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+  let fontSize = Number(saved.fontSize || 20);
+  let theme = saved.theme || "light";
+
+  function applyReaderSettings() {
+    root.style.setProperty("--reader-font-size", `${fontSize}px`);
+    root.dataset.readerTheme = theme;
+    localStorage.setItem(storageKey, JSON.stringify({ fontSize, theme }));
+  }
+
+  tools?.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLButtonElement)) return;
+
+    const sizeChange = target.dataset.readerSize;
+    const selectedTheme = target.dataset.readerTheme;
+
+    if (sizeChange) {
+      fontSize = Math.min(24, Math.max(17, fontSize + Number(sizeChange)));
+    }
+
+    if (selectedTheme) {
+      theme = selectedTheme;
+    }
+
+    applyReaderSettings();
+  });
+
+  applyReaderSettings();
+</script>

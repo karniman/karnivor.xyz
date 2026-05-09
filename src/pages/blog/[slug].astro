@@ -1,0 +1,84 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getAllPosts, renderPostMarkdown, type BlogPost } from "../../lib/blog";
+
+export async function getStaticPaths() {
+  const posts = await getAllPosts();
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props as { post: BlogPost };
+const canonical = new URL(`/blog/${post.slug}/`, Astro.site).toString();
+const html = await renderPostMarkdown(post);
+const formattedDate = new Intl.DateTimeFormat("ru-RU", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+}).format(new Date(`${post.publishedAt}T00:00:00`));
+const heroImage = "/images/karnivor-strength.png";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.title,
+  description: post.description,
+  url: canonical,
+  datePublished: post.publishedAt,
+  dateModified: post.updatedAt,
+  inLanguage: "ru",
+  isAccessibleForFree: true,
+  publisher: {
+    "@type": "Organization",
+    name: "karnivor.xyz",
+  },
+};
+---
+
+<BaseLayout
+  title={post.title}
+  description={post.description}
+  canonical={canonical}
+  image={heroImage}
+  ogType="article"
+  jsonLd={jsonLd}
+>
+  <main>
+    <article class="blog-article">
+      <header class="blog-article__header">
+        <div class="blog-article__intro">
+          <a class="reader-back" href="/blog/">← Все статьи</a>
+          <p class="eyebrow">Блог karnivor.xyz</p>
+          <h1>{post.title}</h1>
+          <p>{post.description}</p>
+          <dl class="compact-meta">
+            <div>
+              <dt>Опубликовано</dt>
+              <dd><time datetime={post.publishedAt}>{formattedDate}</time></dd>
+            </div>
+            <div>
+              <dt>Чтение</dt>
+              <dd>{post.readingMinutes} мин</dd>
+            </div>
+            <div>
+              <dt>Объем</dt>
+              <dd>{post.wordCount.toLocaleString("ru-RU")} слов</dd>
+            </div>
+          </dl>
+        </div>
+        <img
+          class="blog-article__illustration"
+          src={heroImage}
+          alt="Атлет поднимает гантели"
+          width="1448"
+          height="1086"
+          loading="eager"
+          decoding="async"
+        />
+      </header>
+      <div class="reader-content blog-content" set:html={html} />
+    </article>
+  </main>
+</BaseLayout>
