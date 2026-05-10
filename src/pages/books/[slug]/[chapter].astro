@@ -51,8 +51,15 @@ const jsonLd = {
   bodyClass="reader-page"
 >
   <main class="reader-shell">
-    <aside class="reader-sidebar" data-pagefind-ignore>
-      <a class="reader-back" href={`/books/${book.slug}/`}>← К книге</a>
+    <button class="reader-menu-backdrop" type="button" data-reader-menu-close aria-label="Закрыть содержание"></button>
+
+    <aside id="reader-contents" class="reader-sidebar" data-pagefind-ignore aria-label="Содержание книги">
+      <div class="reader-sidebar__header">
+        <a class="reader-back" href={`/books/${book.slug}/`}>← К книге</a>
+        <button class="reader-sidebar__close" type="button" data-reader-menu-close aria-label="Закрыть содержание">
+          ×
+        </button>
+      </div>
       <p class="reader-book-title">{book.title}</p>
       <p class="reader-sidebar-label">Содержание</p>
       <ol>
@@ -70,12 +77,28 @@ const jsonLd = {
 
     <section class="reader-main">
       <nav class="reader-topbar" data-pagefind-ignore aria-label="Навигация по книге">
-        <ol class="reader-breadcrumbs" aria-label="Хлебные крошки">
-          <li><a href="/">Главная</a></li>
-          <li><a href="/books/">Книги</a></li>
-          <li><a href={`/books/${book.slug}/`}>{book.title}</a></li>
-          <li aria-current="page">{progressLabel}</li>
-        </ol>
+        <div class="reader-topbar__nav">
+          <button
+            class="reader-menu-button"
+            type="button"
+            data-reader-menu
+            aria-controls="reader-contents"
+            aria-expanded="false"
+          >
+            <span class="reader-menu-button__icon" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+            <span>Содержание</span>
+          </button>
+          <ol class="reader-breadcrumbs" aria-label="Хлебные крошки">
+            <li><a href="/">Главная</a></li>
+            <li><a href="/books/">Книги</a></li>
+            <li><a href={`/books/${book.slug}/`}>{book.title}</a></li>
+            <li aria-current="page">{progressLabel}</li>
+          </ol>
+        </div>
         <ReaderControls />
       </nav>
 
@@ -112,4 +135,48 @@ const jsonLd = {
       </nav>
     </section>
   </main>
+
+  <script>
+    const readerMenuButton = document.querySelector("[data-reader-menu]");
+    const readerSidebar = document.querySelector("#reader-contents");
+    const readerMenuCloseButtons = document.querySelectorAll("[data-reader-menu-close]");
+    const readerSidebarCloseButton = readerSidebar?.querySelector("[data-reader-menu-close]");
+    const mobileReaderQuery = window.matchMedia("(max-width: 920px)");
+    const readerMenuOpenClass = "reader-nav-open";
+
+    function setReaderMenuState(isOpen: boolean, restoreFocus = false) {
+      const shouldOpen = Boolean(isOpen && mobileReaderQuery.matches);
+      document.body.classList.toggle(readerMenuOpenClass, shouldOpen);
+      readerMenuButton?.setAttribute("aria-expanded", String(shouldOpen));
+      readerSidebar?.toggleAttribute("inert", mobileReaderQuery.matches && !shouldOpen);
+
+      if (shouldOpen) {
+        if (readerSidebarCloseButton instanceof HTMLElement) {
+          readerSidebarCloseButton.focus({ preventScroll: true });
+        }
+      } else if (restoreFocus && readerMenuButton instanceof HTMLElement) {
+        readerMenuButton.focus({ preventScroll: true });
+      }
+    }
+
+    readerMenuButton?.addEventListener("click", () => {
+      setReaderMenuState(!document.body.classList.contains(readerMenuOpenClass));
+    });
+
+    readerMenuCloseButtons.forEach((button) => {
+      button.addEventListener("click", () => setReaderMenuState(false, true));
+    });
+
+    readerSidebar?.addEventListener("click", (event) => {
+      if (!(event.target instanceof Element)) return;
+      if (event.target.closest("a")) setReaderMenuState(false);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") setReaderMenuState(false, true);
+    });
+
+    mobileReaderQuery.addEventListener("change", () => setReaderMenuState(false));
+    setReaderMenuState(false);
+  </script>
 </BaseLayout>
