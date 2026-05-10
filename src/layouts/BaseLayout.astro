@@ -33,7 +33,7 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
 const structuredData = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
 const currentPath = Astro.url.pathname;
 const isHomeActive = currentPath === "/";
-const isBooksActive = currentPath === "/books/" || currentPath.startsWith("/books/");
+const isBooksActive = currentPath === "/books/";
 const isBlogActive = currentPath === "/blog/" || currentPath.startsWith("/blog/");
 ---
 

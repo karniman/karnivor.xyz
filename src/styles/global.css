@@ -954,42 +954,47 @@ dd {
 
 .chapter-list li {
   counter-increment: chapter;
-  padding: 20px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--paper);
 }
 
 .chapter-list a {
+  display: block;
+  padding: 20px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.chapter-list__header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 16px;
-  color: var(--ink);
   font-size: 20px;
   font-weight: 780;
-  text-decoration: none;
 }
 
-.chapter-list a::before {
+.chapter-list__header::before {
   content: counter(chapter, decimal-leading-zero);
   flex: 0 0 auto;
   color: var(--accent);
   font-family: Georgia, "Times New Roman", serif;
 }
 
-.chapter-list span {
+.chapter-list__header span {
   flex: 1;
   min-width: 0;
 }
 
-.chapter-list small {
+.chapter-list__header small {
   flex: 0 0 auto;
   color: var(--muted);
   font-size: 13px;
 }
 
-.chapter-list p {
+.chapter-list__excerpt {
+  display: block;
   margin: 10px 0 0 38px;
   color: var(--muted);
 }
@@ -1509,13 +1514,13 @@ dd {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .chapter-list a {
+  .chapter-list__header {
     align-items: flex-start;
     flex-direction: column;
     gap: 8px;
   }
 
-  .chapter-list p {
+  .chapter-list__excerpt {
     margin-left: 0;
   }
 

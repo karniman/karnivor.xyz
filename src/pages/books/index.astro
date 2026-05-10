@@ -83,8 +83,8 @@ const jsonLd = {
                   </div>
                 </dl>
                 <div class="actions">
-                  <a class="button button--primary" href={`/books/${book.slug}/`}>Открыть книгу</a>
-                  <a class="button button--secondary" href={book.downloadPath}>Скачать Markdown</a>
+                  <a class="button button--primary" href={`/books/${book.slug}/${book.chapters[0].slug}/`}>Читать онлайн</a>
+                  <a class="button button--secondary" href={`/books/${book.slug}/`}>Подробнее</a>
                 </div>
               </div>
             </article>

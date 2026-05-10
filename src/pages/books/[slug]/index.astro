@@ -17,6 +17,29 @@ interface Props {
 
 const { book } = Astro.props;
 const firstChapter = book.chapters[0];
+const downloadFileBases: Record<string, string> = {
+  "common-drugs": "Gorbushkin_Grisha_Alkogol_kofein_i_sahar_kak_bytovye_narkotiki",
+  "karnivor-dieta": "Gorbushkin_Grisha_Karnivor_Dieta",
+  "owsley-stanley": "Gorbushkin_Grisha_Owsley_Stanley_i_karnivor_dieta",
+  "vilhjalmur-stefansson": "Gorbushkin_Grisha_Vilhjalmur_Stefansson_i_karnivor_dieta",
+};
+const downloadFileBase = downloadFileBases[book.slug];
+const downloadFormats = downloadFileBase
+  ? [
+      {
+        label: "PDF",
+        href: `/downloads/${book.slug}/${downloadFileBase}.a4.pdf`,
+      },
+      {
+        label: "EPUB",
+        href: `/downloads/${book.slug}/${downloadFileBase}.epub`,
+      },
+      {
+        label: "FB3",
+        href: `/downloads/${book.slug}/${downloadFileBase}.fb3`,
+      },
+    ]
+  : [];
 const canonical = new URL(`/books/${book.slug}/`, Astro.site).toString();
 const title = `${book.title} - читать онлайн бесплатно`;
 const jsonLd = {
@@ -50,7 +73,6 @@ const jsonLd = {
   image={book.coverImage}
   ogType="book"
   jsonLd={jsonLd}
-  readHref={`/books/${book.slug}/${firstChapter.slug}/`}
 >
   <main>
     <section class="book-hero">
@@ -68,7 +90,13 @@ const jsonLd = {
         <p class="hero__lead">{book.description}</p>
         <div class="actions">
           <a class="button button--primary" href={`/books/${book.slug}/${firstChapter.slug}/`}>Читать онлайн</a>
-          <a class="button button--secondary" href={book.downloadPath}>Скачать Markdown</a>
+          {
+            downloadFormats.map((format) => (
+              <a class="button button--secondary" href={format.href} download>
+                Скачать {format.label}
+              </a>
+            ))
+          }
           {
             book.litresUrl && (
               <a class="button button--secondary external-link" href={book.litresUrl} target="_blank" rel="noopener noreferrer">
@@ -122,10 +150,12 @@ const jsonLd = {
           book.chapters.map((chapter) => (
             <li>
               <a href={`/books/${book.slug}/${chapter.slug}/`}>
-                <span>{chapter.title}</span>
-                <small>{chapter.readingMinutes} мин</small>
+                <span class="chapter-list__header">
+                  <span>{chapter.title}</span>
+                  <small>{chapter.readingMinutes} мин</small>
+                </span>
+                {chapter.excerpt && <span class="chapter-list__excerpt">{chapter.excerpt}</span>}
               </a>
-              {chapter.excerpt && <p>{chapter.excerpt}</p>}
             </li>
           ))
         }
@@ -143,8 +173,8 @@ const jsonLd = {
           поэтому его можно читать без приложения, сохранять в закладки и находить через поиск.
         </p>
         <p>
-          Скачать исходный Markdown можно одной кнопкой. Формат удобен для личного архива,
-          заметок и чтения вне сайта.
+          Книгу можно скачать в PDF, EPUB и FB3 для чтения вне сайта на телефоне,
+          планшете, электронной книге или компьютере.
         </p>
       </div>
     </section>
