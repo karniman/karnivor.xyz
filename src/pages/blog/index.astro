@@ -55,23 +55,38 @@ const jsonLd = {
       <div class="blog-list">
         {
           posts.map((post) => (
-            <article class="blog-card">
+            <article class:list={["blog-card", { "blog-card--text-only": !post.image }]}>
               <a class="blog-card__link" href={`/blog/${post.slug}/`}>
-                <div class="blog-card__meta">
-                  <time datetime={post.publishedAt}>
-                    {new Intl.DateTimeFormat("ru-RU", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    }).format(new Date(`${post.publishedAt}T00:00:00`))}
-                  </time>
-                  <span>{post.readingMinutes} мин чтения</span>
+                <div class="blog-card__body">
+                  <div class="blog-card__meta">
+                    <time datetime={post.publishedAt}>
+                      {new Intl.DateTimeFormat("ru-RU", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      }).format(new Date(`${post.publishedAt}T00:00:00`))}
+                    </time>
+                    <span>{post.readingMinutes} мин чтения</span>
+                  </div>
+                  <h2>{post.title}</h2>
+                  <p>{post.description}</p>
+                  <div class="tag-row" aria-label="Темы статьи">
+                    {post.tags.map((tag) => <span>{tag}</span>)}
+                  </div>
                 </div>
-                <h2>{post.title}</h2>
-                <p>{post.description}</p>
-                <div class="tag-row" aria-label="Темы статьи">
-                  {post.tags.map((tag) => <span>{tag}</span>)}
-                </div>
+                {
+                  post.image && (
+                    <img
+                      class="blog-card__image"
+                      src={post.image}
+                      alt={post.imageAlt ?? ""}
+                      width="1600"
+                      height="1000"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  )
+                }
               </a>
             </article>
           ))

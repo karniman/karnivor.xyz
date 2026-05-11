@@ -15,6 +15,8 @@ export type BlogPost = {
   description: string;
   publishedAt: string;
   updatedAt: string;
+  image?: string;
+  imageAlt?: string;
   tags: string[];
   markdown: string;
   excerpt: string;
@@ -23,6 +25,14 @@ export type BlogPost = {
 };
 
 const blogSources: BlogSource[] = [
+  {
+    slug: "rebenok-ne-rodilsya-s-pechenem-v-ruke",
+    sourcePath: path.join(root, "src", "content", "blog", "rebenok-ne-rodilsya-s-pechenem-v-ruke.md"),
+  },
+  {
+    slug: "karnivor-shashlyk-myaso-zhir-ogon",
+    sourcePath: path.join(root, "src", "content", "blog", "karnivor-shashlyk-myaso-zhir-ogon.md"),
+  },
   {
     slug: "karnivor-dieta-dlya-nachinayushchih",
     sourcePath: path.join(root, "src", "content", "blog", "karnivor-dieta-dlya-nachinayushchih.md"),
@@ -61,6 +71,8 @@ async function loadPost(source: BlogSource): Promise<BlogPost> {
     description: stringField(frontmatter.description, excerptFromMarkdown(body)),
     publishedAt: stringField(frontmatter.publishedAt, "2026-05-07"),
     updatedAt: stringField(frontmatter.updatedAt, stringField(frontmatter.publishedAt, "2026-05-07")),
+    image: optionalStringField(frontmatter.image),
+    imageAlt: optionalStringField(frontmatter.imageAlt),
     tags: arrayField(frontmatter.tags),
     markdown: body,
     excerpt: excerptFromMarkdown(body),
@@ -71,6 +83,10 @@ async function loadPost(source: BlogSource): Promise<BlogPost> {
 
 function stringField(value: string | string[] | undefined, fallback: string): string {
   return typeof value === "string" ? value : fallback;
+}
+
+function optionalStringField(value: string | string[] | undefined): string | undefined {
+  return typeof value === "string" && value.length > 0 ? value : undefined;
 }
 
 function arrayField(value: string | string[] | undefined): string[] {

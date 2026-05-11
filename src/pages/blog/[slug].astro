@@ -18,7 +18,6 @@ const formattedDate = new Intl.DateTimeFormat("ru-RU", {
   month: "long",
   year: "numeric",
 }).format(new Date(`${post.publishedAt}T00:00:00`));
-const heroImage = "/images/karnivor-strength.png";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -26,6 +25,7 @@ const jsonLd = {
   headline: post.title,
   description: post.description,
   url: canonical,
+  ...(post.image ? { image: new URL(post.image, Astro.site).toString() } : {}),
   datePublished: post.publishedAt,
   dateModified: post.updatedAt,
   inLanguage: "ru",
@@ -41,7 +41,7 @@ const jsonLd = {
   title={post.title}
   description={post.description}
   canonical={canonical}
-  image={heroImage}
+  image={post.image}
   ogType="article"
   jsonLd={jsonLd}
 >
@@ -68,15 +68,19 @@ const jsonLd = {
             </div>
           </dl>
         </div>
-        <img
-          class="blog-article__illustration"
-          src={heroImage}
-          alt="Атлет поднимает гантели"
-          width="1448"
-          height="1086"
-          loading="eager"
-          decoding="async"
-        />
+        {
+          post.image && (
+            <img
+              class="blog-article__illustration"
+              src={post.image}
+              alt={post.imageAlt ?? ""}
+              width="1600"
+              height="1000"
+              loading="eager"
+              decoding="async"
+            />
+          )
+        }
       </header>
       <div class="reader-content blog-content" set:html={html} />
     </article>

@@ -252,18 +252,33 @@ const jsonLd = {
           posts.slice(0, 3).map((post) => (
             <article class="blog-card">
               <a class="blog-card__link" href={`/blog/${post.slug}/`}>
-                <div class="blog-card__meta">
-                  <time datetime={post.publishedAt}>
-                    {new Intl.DateTimeFormat("ru-RU", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    }).format(new Date(`${post.publishedAt}T00:00:00`))}
-                  </time>
-                  <span>{post.readingMinutes} мин чтения</span>
+                {
+                  post.image && (
+                    <img
+                      class="blog-card__image"
+                      src={post.image}
+                      alt={post.imageAlt ?? ""}
+                      width="1600"
+                      height="1000"
+                      loading="eager"
+                      decoding="async"
+                    />
+                  )
+                }
+                <div class="blog-card__body">
+                  <div class="blog-card__meta">
+                    <time datetime={post.publishedAt}>
+                      {new Intl.DateTimeFormat("ru-RU", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      }).format(new Date(`${post.publishedAt}T00:00:00`))}
+                    </time>
+                    <span>{post.readingMinutes} мин чтения</span>
+                  </div>
+                  <h3>{post.title}</h3>
+                  <p>{post.description}</p>
                 </div>
-                <h3>{post.title}</h3>
-                <p>{post.description}</p>
               </a>
             </article>
           ))
