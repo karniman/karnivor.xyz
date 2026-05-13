@@ -252,10 +252,26 @@ img {
   --photo-tape-tilt: -2.6deg;
 }
 
+.photo-card--format {
+  --photo-card-width: 680px;
+  --photo-card-tilt: -1.4deg;
+  --photo-tape-left: 49%;
+  --photo-tape-tilt: 2.2deg;
+}
+
+.photo-card--squat {
+  --photo-card-width: 680px;
+  --photo-card-tilt: 1.5deg;
+  --photo-tape-left: 52%;
+  --photo-tape-tilt: -2.4deg;
+}
+
 .hero-illustration,
 .page-hero__illustration,
 .about-illustration,
 .practice-illustration,
+.format-illustration,
+.books-promo-illustration,
 .blog-article__illustration {
   width: 100%;
   border: 8px solid #fffdf8;
@@ -457,11 +473,12 @@ h3 {
 }
 
 .content-band--alt {
-  background: var(--paper-strong);
+  background: var(--paper);
 }
 
 .content-band--topics {
   border-top: 1px solid var(--line);
+  background: var(--bg);
 }
 
 .content-band--practice {
@@ -598,9 +615,12 @@ h3 {
   justify-self: end;
 }
 
-.text-section,
-.toc-section {
+.text-section {
   background: var(--bg);
+}
+
+.toc-section {
+  background: var(--paper);
 }
 
 .section-heading {
@@ -859,19 +879,8 @@ dd {
   max-width: 1080px;
 }
 
-.format-illustration {
-  max-width: 1080px;
-  margin: 34px 0 0;
-}
-
-.format-illustration img {
-  width: 100%;
-  border: 8px solid #fffdf8;
-  border-radius: 8px;
-  background: #fffdf8;
-  box-shadow: 0 18px 50px rgba(25, 12, 8, 0.16);
-}
-
+.books-promo-layout,
+.format-layout,
 .about-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(420px, 680px);
@@ -880,31 +889,43 @@ dd {
   align-items: center;
 }
 
+.books-promo-layout__copy,
+.format-layout__copy,
 .about-layout__copy {
   min-width: 0;
 }
 
+.books-promo-layout .section-heading,
+.format-layout .section-heading,
 .about-layout .section-heading {
   max-width: 760px;
 }
 
+.books-promo-layout .prose-columns,
+.format-layout .prose-columns,
 .about-layout .prose-columns {
   grid-template-columns: 1fr;
   max-width: 700px;
   gap: 14px;
 }
 
+.books-promo-layout__visual,
+.format-layout__visual,
 .about-layout__visual {
   justify-self: end;
 }
 
 @media (max-width: 1180px) {
+  .books-promo-layout,
   .about-layout,
+  .format-layout,
   .practice-layout {
     grid-template-columns: 1fr;
   }
 
+  .books-promo-layout__visual,
   .about-layout__visual,
+  .format-layout__visual,
   .practice-layout__visual {
     justify-self: start;
     width: min(100%, 820px);

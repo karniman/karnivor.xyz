@@ -4,11 +4,13 @@ import BookCover from "../../components/BookCover.astro";
 import { getAllBooks } from "../../lib/books";
 
 const books = await getAllBooks();
+const firstBook = books[0];
 const canonical = new URL("/books/", Astro.site).toString();
 const title = "Карнивор книги";
 const description =
   "Бесплатные русскоязычные книги karnivor.xyz о карнивор диете, мясо-жировом питании, Стефанссоне, Оусли Стэнли и практическом отказе от промышленной еды.";
 const heroImage = "/images/karnivor-books.png";
+const promoImage = "/images/karnivor-squat.png";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -51,7 +53,7 @@ const jsonLd = {
       </div>
     </section>
 
-    <section class="content-band">
+    <section class="content-band" id="books-list">
       <div class="book-grid">
         {
           books.map((book) => (
@@ -90,6 +92,49 @@ const jsonLd = {
             </article>
           ))
         }
+      </div>
+    </section>
+
+    <section class="content-band content-band--alt">
+      <div class="books-promo-layout">
+        <div class="books-promo-layout__copy">
+          <div class="section-heading">
+            <p class="eyebrow">Бесплатно и без барьеров</p>
+            <h2>Выберите книгу и начните читать сразу</h2>
+            <p>
+              Все книги открыты целиком: без регистрации, рекламы и подписки. Можно читать онлайн по
+              главам, возвращаться к нужным местам из закладок и делиться ссылками на конкретные
+              разделы.
+            </p>
+          </div>
+          <div class="prose-columns">
+            <p>
+              Онлайн-страницы удобны для быстрого чтения с телефона или ноутбука: открыл главу,
+              прочитал, продолжил позже там же.
+            </p>
+            <p>
+              Для офлайна доступны PDF, EPUB и FB3. Скачайте книгу на электронную читалку, планшет
+              или телефон и берите материалы с собой.
+            </p>
+          </div>
+          <div class="actions">
+            <a class="button button--primary" href={`/books/${firstBook.slug}/${firstBook.chapters[0].slug}/`}>
+              Начать читать
+            </a>
+            <a class="button button--secondary" href="#books-list">Выбрать книгу</a>
+          </div>
+        </div>
+        <div class="books-promo-layout__visual photo-card photo-card--squat">
+          <img
+            class="books-promo-illustration"
+            src={promoImage}
+            alt="Иллюстрация: атлет приседает со штангой"
+            width="1448"
+            height="1086"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
       </div>
     </section>
   </main>

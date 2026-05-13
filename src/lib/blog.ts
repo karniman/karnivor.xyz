@@ -26,6 +26,10 @@ export type BlogPost = {
 
 const blogSources: BlogSource[] = [
   {
+    slug: "pochemu-prostaya-eda-kazhetsya-radikalnoy",
+    sourcePath: path.join(root, "src", "content", "blog", "pochemu-prostaya-eda-kazhetsya-radikalnoy.md"),
+  },
+  {
     slug: "rebenok-ne-rodilsya-s-pechenem-v-ruke",
     sourcePath: path.join(root, "src", "content", "blog", "rebenok-ne-rodilsya-s-pechenem-v-ruke.md"),
   },
