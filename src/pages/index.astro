@@ -6,7 +6,10 @@ import { getAllBooks } from "../lib/books";
 
 const books = await getAllBooks();
 const posts = await getAllPosts();
-const highlightedBooks = books.slice(0, 3);
+const highlightedBookSlugs = ["karnivor-dieta", "vilhjalmur-stefansson", "owsley-stanley"];
+const highlightedBooks = highlightedBookSlugs
+  .map((slug) => books.find((book) => book.slug === slug))
+  .filter((book) => book !== undefined);
 const pluralRu = (count: number, forms: [string, string, string]) => {
   const mod10 = count % 10;
   const mod100 = count % 100;
