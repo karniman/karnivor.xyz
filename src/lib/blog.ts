@@ -132,7 +132,7 @@ function excerptFromMarkdown(markdown: string): string {
   const paragraph = markdown
     .split(/\n{2,}/)
     .map((part) => stripMarkdown(part).trim())
-    .find((part) => part.length > 80);
+    .find((part) => part.length > 80 && !isUrlOnly(part));
 
   if (!paragraph) return "";
   return paragraph.length > 220 ? `${paragraph.slice(0, 217).trim()}...` : paragraph;
@@ -141,11 +141,16 @@ function excerptFromMarkdown(markdown: string): string {
 function stripMarkdown(value: string): string {
   return value
     .replace(/```[\s\S]*?```/g, " ")
+    .replace(/<((?:https?|mailto):[^>\s]+)>/gi, "$1")
     .replace(/!\[[^\]]*]\([^)]+\)/g, " ")
     .replace(/\[([^\]]+)]\([^)]+\)/g, "$1")
     .replace(/[#>*_`|[\]\\]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function isUrlOnly(value: string): boolean {
+  return /^(?:https?:\/\/|mailto:)\S+$/i.test(value);
 }
 
 function countWords(markdown: string): number {
