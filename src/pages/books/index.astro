@@ -27,9 +27,20 @@ const jsonLd = {
     inLanguage: book.language,
   })),
 };
+const breadcrumbs = [
+  { name: "Главная", href: "/" },
+  { name: "Книги", href: canonical },
+];
 ---
 
-<BaseLayout title={title} description={description} canonical={canonical} image={heroImage} jsonLd={jsonLd}>
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  image={heroImage}
+  jsonLd={jsonLd}
+  breadcrumbs={breadcrumbs}
+>
   <main>
     <section class="page-hero page-hero--with-illustration">
       <div class="page-hero__content">

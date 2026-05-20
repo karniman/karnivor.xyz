@@ -35,6 +35,11 @@ const jsonLd = {
     name: "karnivor.xyz",
   },
 };
+const breadcrumbs = [
+  { name: "Главная", href: "/" },
+  { name: "Блог", href: "/blog/" },
+  { name: post.title, href: canonical },
+];
 ---
 
 <BaseLayout
@@ -44,6 +49,7 @@ const jsonLd = {
   image={post.image}
   ogType="article"
   jsonLd={jsonLd}
+  breadcrumbs={breadcrumbs}
 >
   <main>
     <article class="blog-article">

@@ -64,6 +64,11 @@ const jsonLd = {
     url: new URL(`/books/${book.slug}/${chapter.slug}/`, Astro.site).toString(),
   })),
 };
+const breadcrumbs = [
+  { name: "Главная", href: "/" },
+  { name: "Книги", href: "/books/" },
+  { name: book.title, href: canonical },
+];
 ---
 
 <BaseLayout
@@ -73,6 +78,7 @@ const jsonLd = {
   image={book.coverImage}
   ogType="book"
   jsonLd={jsonLd}
+  breadcrumbs={breadcrumbs}
 >
   <main>
     <section class="book-hero">
@@ -92,7 +98,7 @@ const jsonLd = {
           <a class="button button--primary" href={`/books/${book.slug}/${firstChapter.slug}/`}>Читать онлайн</a>
           {
             downloadFormats.map((format) => (
-              <a class="button button--secondary" href={format.href} download>
+              <a class="button button--secondary" href={format.href} download rel="nofollow">
                 Скачать {format.label}
               </a>
             ))

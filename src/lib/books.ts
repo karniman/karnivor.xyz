@@ -29,7 +29,6 @@ export type Book = {
   language: "ru";
   author: string;
   sourcePath: string;
-  downloadPath: string;
   publishedYear: number;
   chapters: BookChapter[];
   wordCount: number;
@@ -57,7 +56,6 @@ const bookSources = [
     language: "ru" as const,
     author: "Гриша Горбушкин",
     sourcePath: path.join(root, "manuscripts", "karnivor-dieta", "karnivor-dieta.md"),
-    downloadPath: "/downloads/karnivor-dieta.md",
     publishedYear: 2026,
   },
   {
@@ -77,7 +75,6 @@ const bookSources = [
     language: "ru" as const,
     author: "Гриша Горбушкин",
     sourcePath: path.join(root, "manuscripts", "paleo-dieta", "paleo-dieta.md"),
-    downloadPath: "/downloads/paleo-dieta.md",
     publishedYear: 2026,
   },
   {
@@ -100,7 +97,6 @@ const bookSources = [
     language: "ru" as const,
     author: "Гриша Горбушкин",
     sourcePath: path.join(root, "manuscripts", "vilhjalmur-stefansson", "vilhjalmur-stefansson.md"),
-    downloadPath: "/downloads/vilhjalmur-stefansson.md",
     publishedYear: 2026,
   },
   {
@@ -123,7 +119,6 @@ const bookSources = [
     language: "ru" as const,
     author: "Гриша Горбушкин",
     sourcePath: path.join(root, "manuscripts", "owsley-stenly", "owsley-stanley.md"),
-    downloadPath: "/downloads/owsley-stanley.md",
     publishedYear: 2026,
   },
   {
@@ -142,7 +137,6 @@ const bookSources = [
     language: "ru" as const,
     author: "Гриша Горбушкин",
     sourcePath: path.join(root, "manuscripts", "common-drugs", "common-drugs.md"),
-    downloadPath: "/downloads/common-drugs.md",
     publishedYear: 2026,
   },
 ];

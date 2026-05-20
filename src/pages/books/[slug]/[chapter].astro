@@ -40,6 +40,12 @@ const jsonLd = {
   position: chapter.index + 1,
   url: canonical,
 };
+const breadcrumbs = [
+  { name: "Главная", href: "/" },
+  { name: "Книги", href: "/books/" },
+  { name: book.title, href: `/books/${book.slug}/` },
+  { name: chapter.title, href: canonical },
+];
 ---
 
 <BaseLayout
@@ -48,6 +54,7 @@ const jsonLd = {
   canonical={canonical}
   ogType="article"
   jsonLd={jsonLd}
+  breadcrumbs={breadcrumbs}
   bodyClass="reader-page"
 >
   <main class="reader-shell">

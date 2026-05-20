@@ -2,6 +2,10 @@
 import "../styles/global.css";
 
 type JsonLd = Record<string, unknown> | Array<Record<string, unknown>>;
+type Breadcrumb = {
+  name: string;
+  href: string;
+};
 
 interface Props {
   title: string;
@@ -10,6 +14,7 @@ interface Props {
   image?: string;
   ogType?: string;
   jsonLd?: JsonLd;
+  breadcrumbs?: Breadcrumb[];
   bodyClass?: string;
   readHref?: string;
   readLabel?: string;
@@ -22,6 +27,7 @@ const {
   image,
   ogType = "website",
   jsonLd,
+  breadcrumbs = [],
   bodyClass = "",
   readHref,
   readLabel = "Читать",
@@ -30,7 +36,23 @@ const {
 const siteName = "karnivor.xyz";
 const googleAnalyticsId = "G-C55TYB0SRL";
 const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
-const structuredData = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
+const breadcrumbJsonLd =
+  breadcrumbs.length > 0
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: breadcrumbs.map((item, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: item.name,
+          item: new URL(item.href, Astro.site).toString(),
+        })),
+      }
+    : undefined;
+const structuredData = [
+  ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : []),
+  ...(breadcrumbJsonLd ? [breadcrumbJsonLd] : []),
+];
 const currentPath = Astro.url.pathname;
 const isHomeActive = currentPath === "/";
 const isBooksActive = currentPath === "/books/";
