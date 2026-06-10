@@ -1,6 +1,15 @@
 (() => {
   const forms = document.querySelectorAll("[data-kit-subscribe]");
 
+  const trackLead = () => {
+    if (typeof window.gtag !== "function") return;
+
+    window.gtag("event", "generate_lead", {
+      method: "newsletter",
+      content_type: "email_subscription",
+    });
+  };
+
   forms.forEach((form) => {
     const emailInput = form.querySelector('input[name="email_address"]');
     const message = form.querySelector("[data-subscribe-message]");
@@ -96,6 +105,7 @@
         }
 
         form.reset();
+        trackLead();
         setMessage("Готово! Проверьте почту, чтобы подтвердить подписку.", "success");
       } catch (error) {
         const fallback = "Не получилось оформить подписку. Попробуйте еще раз.";
