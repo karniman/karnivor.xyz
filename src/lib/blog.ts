@@ -26,6 +26,10 @@ export type BlogPost = {
 
 const blogSources: BlogSource[] = [
   {
+    slug: "karnivor-dieta-dlya-pohudeniya",
+    sourcePath: path.join(root, "src", "content", "blog", "karnivor-dieta-dlya-pohudeniya.md"),
+  },
+  {
     slug: "karnivor-dieta-chto-eto-takoe-prostymi-slovami",
     sourcePath: path.join(
       root,
