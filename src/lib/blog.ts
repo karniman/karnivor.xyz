@@ -26,6 +26,16 @@ export type BlogPost = {
 
 const blogSources: BlogSource[] = [
   {
+    slug: "karnivor-dieta-menyu-na-7-dney-dlya-nachinayushchih",
+    sourcePath: path.join(
+      root,
+      "src",
+      "content",
+      "blog",
+      "karnivor-dieta-menyu-na-7-dney-dlya-nachinayushchih.md",
+    ),
+  },
+  {
     slug: "kakie-kuski-myasa-pokupat-v-rossii",
     sourcePath: path.join(root, "src", "content", "blog", "kakie-kuski-myasa-pokupat-v-rossii.md"),
   },
