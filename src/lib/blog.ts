@@ -36,6 +36,10 @@ const blogSources: BlogSource[] = [
     ),
   },
   {
+    slug: "karnivor-dieta-oshibki-novichkov",
+    sourcePath: path.join(root, "src", "content", "blog", "karnivor-dieta-oshibki-novichkov.md"),
+  },
+  {
     slug: "karnivor-dieta-dlya-pohudeniya",
     sourcePath: path.join(root, "src", "content", "blog", "karnivor-dieta-dlya-pohudeniya.md"),
   },
